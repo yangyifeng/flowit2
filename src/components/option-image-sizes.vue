@@ -2,11 +2,12 @@
   <option-box title="尺寸">
     <div class="content" slot="content">
       <div
-        v-for="item in sizes"
-        @click="select(item)"
-        :class="['image-sizes-item', item.name === selected.name ? 'selected' : '']"
+        v-if="options && options.sizes"
+        v-for="item in options.sizes"
+        @click="updateImageSize(item)"
+        :class="['image-sizes-item', item.name === currentOption.size.name ? 'selected' : '']"
         :style="{
-            width:  itemHeight * item.width / item.height + 'px',
+            width:  itemHeight * item.w / item.h + 'px',
             height: itemHeight + 'px'
           }">
           {{ item.name }}
@@ -16,30 +17,16 @@
 </template>
 <script>
   import OptionBox from '@/components/option-box.vue'
+
   export default {
+    extends: OptionBox,
     data () {
       return {
-        selected: {},
-        itemHeight: 45,
-        sizes: [{
-          name: 'wechat',
-          width: 900,
-          height: 500
-        }, {
-          name: 'weibo',
-          width: 200,
-          height: 200
-        }]
+        itemHeight: 45
       }
     },
     components: {
       OptionBox
-    },
-    methods: {
-      select (item) {
-        this.selected = item
-        this.$emit('update:option', item)
-      }
     }
   }
 </script>

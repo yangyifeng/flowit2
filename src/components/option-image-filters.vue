@@ -3,10 +3,11 @@
     <div class="content" slot="content">
       <div class="option-selector" @click.stop="toggleList">
         <div class="option-selected">
-          {{ selected.name }}
+          {{ currentOption.filter.name || 'none' }}
         </div>
-        <ul class="option-item-list" v-if="isShowList">
-          <li v-for="item in filters" @click="select(item)">{{ item.name }}</li>
+        <ul class="option-item-list"
+          v-if="options && options.filters && isShowList">
+          <li v-for="item in options.filters" @click="updateImageFilter(item)">{{ item.name }}</li>
         </ul>
       </div>
     </div>
@@ -14,19 +15,12 @@
 </template>
 <script>
   import OptionBox from '@/components/option-box.vue'
+
   export default {
+    extends: OptionBox,
     data () {
       return {
-        isShowList: false,
-        selected: {
-          name: 'none'
-        },
-        filters: [{
-          name: 'light contrast',
-          thumbnail: ''
-        }, {
-          name: 'none'
-        }]
+        isShowList: false
       }
     },
     components: {
@@ -35,10 +29,6 @@
     methods: {
       toggleList () {
         this.isShowList = !this.isShowList
-      },
-      select (item) {
-        this.selected = item
-        this.$emit('update:option', item)
       }
     },
     mounted () {

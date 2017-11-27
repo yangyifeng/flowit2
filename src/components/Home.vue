@@ -34,14 +34,7 @@ export default {
   name: 'Home',
   data () {
     return {
-      title: 'flow.it',
-      filters: [],
-      photos: [],
-      myOption: {
-        size: '',
-        filter: '',
-        photo: ''
-      }
+      title: 'flow.it'
     }
   },
   components: {

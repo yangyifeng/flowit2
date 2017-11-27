@@ -3,9 +3,10 @@
     <div class="content" slot="content">
       <div class="photo-gallery">
         <div
-          :class="['photo-item', item === selected ? 'selected' : '']"
-          v-for="item in photos"
-          @click="select(item)">
+          :class="['photo-item', item.raw === currentOption.photo.raw ? 'selected' : '']"
+          v-if="options && options.photos"
+          v-for="item in options.photos"
+          @click="updatePhoto(item)">
           <img :src="item.small" alt="">
         </div>
       </div>
@@ -13,38 +14,15 @@
   </option-box>
 </template>
 <script>
-  import Unsplash, {toJson} from 'unsplash-js'
   import OptionBox from '@/components/option-box.vue'
-  import config from '@/config'
 
   export default {
-    data () {
-      return {
-        selected: {},
-        photos: []
-      }
-    },
+    extends: OptionBox,
     components: {
       OptionBox
     },
-    methods: {
-      select (item) {
-        this.selected = item
-        this.$emit('update:option', item)
-      }
-    },
     mounted () {
-      const unsplash = new Unsplash(config.unsplash)
-
-      unsplash.collections.listCollections(1, 10, 'popular')
-      .then(toJson)
-      .then(res => {
-        this.photos = res.filter(item => !!item.preview_photos[0])
-          .map(item => item.preview_photos[0].urls)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+      this.getPhotos()
     }
   }
 </script>
@@ -58,6 +36,12 @@
   }
 
   img {
+    border: 2px solid #ddd;
     width: 100%;
+  }
+
+  .selected img {
+    color: #00aa00;
+    border-color: #00aa00;
   }
 </style>

@@ -5,10 +5,34 @@
   </div>
 </template>
 <script>
+  import {
+    mapGetters,
+    mapActions
+  } from 'vuex'
+
   export default {
     props: {
       title: String
-    }
+    },
+    computed: {
+      ...mapGetters([
+        'options',
+        'currentOption'
+      ])
+    },
+    methods: {
+      ...mapActions([
+        'getPhotos',
+        'updateImageSize',
+        'updateImageFilter',
+        'updatePhoto'
+      ])
+    },
+    // mounted () {
+    //   if (this.handleMounted) {
+    //     this.handleMounted()
+    //   }
+    // }
   }
 </script>
 <style scoped>
