@@ -18,10 +18,44 @@ const state = {
       h: 200
     }],
     filters: [{
-      name: 'light contrast',
-      thumbnail: ''
-    }, {
-      name: 'none'
+      ref: 'none',
+      title: 'None'
+    },
+    {
+      ref: 'light-contrast',
+      title: 'Light Contrast'
+    },
+    {
+      ref: 'heavy-contrast',
+      title: 'Heavy Contrast'
+    },
+    {
+      ref: 'light-blur',
+      title: 'Light Blur'
+    },
+    {
+      ref: 'heavy-blur',
+      title: 'Heavy Blur'
+    },
+    {
+      ref: 'grayscale',
+      title: 'Grayscale'
+    },
+    {
+      ref: 'blur-grayscale',
+      title: 'Blur Grayscale'
+    },
+    {
+      ref: 'red-tint',
+      title: 'Red Tint'
+    },
+    {
+      ref: 'green-tint',
+      title: 'Green Tint'
+    },
+    {
+      ref: 'blue-tint',
+      title: 'Blue Tint'
     }],
     photos: []
   },

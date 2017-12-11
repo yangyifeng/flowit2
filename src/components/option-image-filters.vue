@@ -1,13 +1,17 @@
 <template>
   <option-box title="滤镜">
     <div class="content" slot="content">
-      <div class="option-selector" @click.stop="toggleList">
+      <div class="option-selector"
+        @click.stop="toggleList">
         <div class="option-selected">
-          {{ currentOption.filter.name || 'none' }}
+          {{ currentOption.filter.title || 'None' }}
         </div>
         <ul class="option-item-list"
           v-if="options && options.filters && isShowList">
-          <li v-for="item in options.filters" @click="updateImageFilter(item)">{{ item.name }}</li>
+          <li v-for="item in options.filters"
+            @click="updateImageFilter(item)">
+            {{ item.title }}
+          </li>
         </ul>
       </div>
     </div>
