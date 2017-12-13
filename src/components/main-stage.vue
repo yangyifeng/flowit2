@@ -36,6 +36,7 @@
       'currentOption.size' (newVal, oldVal) {
         console.log('update option: size', newVal)
         canvas.setHeight(this.currentOption.size.h * 549 / this.currentOption.size.w)
+        this.reposition()
       },
       'currentOption.filter' (newVal, oldVal) {
         console.log('update option: filter', newVal)
@@ -48,88 +49,126 @@
             break
           case 'light-contrast':
             console.log('light-contrast')
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(50,59,57)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(50,59,57)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
             break
           case 'heavy-contrast':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(50,59,57)',
-              alpha: 0.8,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(50,59,57)',
+                alpha: 0.8,
+                mode: 'tint'
+              }
+            })
             break
           case 'light-blur':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(50,59,57)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(50,59,57)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
 
-            filters.push(new fabric.Image.filters.Blur({
-              blur: 0.1
-            }))
+            filters.push({
+              type: 'Blur',
+              params: {
+                blur: 0.1
+              }
+            })
             break
           case 'heavy-blur':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(50,59,57)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(50,59,57)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
 
-            filters.push(new fabric.Image.filters.Blur({
-              blur: 0.5
-            }))
+            filters.push({
+              type: 'Blur',
+              params: {
+                blur: 0.5
+              }
+            })
             break
           case 'grayscale':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(50,59,57)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(50,59,57)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
 
-            filters.push(new fabric.Image.filters.Grayscale())
+            filters.push({
+              type: 'Grayscale'
+            })
             break
           case 'blur-grayscale':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(50,59,57)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
-            filters.push(new fabric.Image.filters.Blur({
-              blur: 0.1
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(50,59,57)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
+            filters.push({
+              type: 'Blur',
+              params: {
+                blur: 0.1
+              }
+            })
 
-            filters.push(new fabric.Image.filters.Grayscale())
+            filters.push({
+              type: 'Grayscale'
+            })
             break
           case 'red-tint':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(115,34,25)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(115,34,25)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
             break
           case 'green-tint':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(21,97,53)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(21,97,53)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
             break
           case 'blue-tint':
-            filters.push(new fabric.Image.filters.BlendColor({
-              color: 'rgb(16,74,113)',
-              alpha: 0.5,
-              mode: 'tint'
-            }))
+            filters.push({
+              type: 'BlendColor',
+              params: {
+                color: 'rgb(16,74,113)',
+                alpha: 0.5,
+                mode: 'tint'
+              }
+            })
             break
         }
 
-        for (let f of filters) {
-          this.fabricBackgroundImage.filters.push(f)
-        }
+        this.createFilters(filters)
         this.fabricBackgroundImage.applyFilters()
         canvas.renderAll()
       }
@@ -138,11 +177,60 @@
       updateCanvasPhoto (photoUrl) {
         const self = this
         fabric.Image.fromURL('http://localhost:9000/?url=' + encodeURIComponent(photoUrl), (oImg) => {
-          oImg.set('selectable', false)
+          let filters = null
+          if (self.fabricBackgroundImage) {
+            filters = self.fabricBackgroundImage.filters
+          }
+
           self.fabricBackgroundImage = oImg
-          canvas.add(self.fabricBackgroundImage)
+
+          canvas.setBackgroundImage(self.fabricBackgroundImage)
+
+          if (filters) {
+            self.fabricBackgroundImage.filters = filters
+            self.fabricBackgroundImage.applyFilters()
+          }
+
+          self.reposition()
+          canvas.renderAll()
         }, {
           crossOrigin: 'anonymous'
+        })
+      },
+      createFilters (filters) {
+        for (let f of filters) {
+          this.fabricBackgroundImage.filters.push(new fabric.Image.filters[f.type](f.params))
+        }
+      },
+      reposition () {
+        if (!canvas.backgroundImage) return
+
+        const bImg = canvas.backgroundImage
+        const canvasAspect = canvas.width / canvas.height
+        const imgAspect = bImg.width / bImg.height
+
+        let left = 0
+        let top = 0
+        let scaleFactor = 1
+
+        if (canvasAspect >= imgAspect) {
+          scaleFactor = canvas.width / bImg.width
+          left = 0
+          top = -((bImg.height * scaleFactor) - canvas.height) / 2
+        } else {
+          scaleFactor = canvas.height / bImg.height
+          top = 0
+          left = -((bImg.width * scaleFactor) - canvas.width) / 2
+        }
+
+        canvas.backgroundImage.set({
+          selectable: false,
+          scaleX: scaleFactor,
+          scaleY: scaleFactor,
+          top: top,
+          left: left,
+          originX: 'left',
+          originY: 'top'
         })
       }
     },
